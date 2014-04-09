@@ -1,0 +1,192 @@
+% \VignetteIndexEntry{Introduction to fuzzyMM}
+\documentclass[titlepage]{article}
+\usepackage{Sweave}
+\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{amssymb}
+
+\title{fuzzyMM: Map Matching using a Fuzzy Logic Based Map Matching Algorithm}
+\author{Nikolai Gorte}
+
+\begin{document}
+\setkeys{Gin}{width=0.8\textwidth}
+\SweaveOpts{concordance=TRUE}
+\maketitle
+
+\section{Introduction}
+Map matching is the process of matching inaccurate GPS trajectories to 
+a digital road network.
+fuzzyMM is a package that implements a fuzzy logic based map
+matching algorithm to solve this task.
+The algorithm consists of three major parts responsible for the identification of
+the links the vehicle is travelling on:
+\begin{itemize}
+  \item Initial MapMatching Process (IMP)
+  \item Subsequent MapMatching Process along a link (SMP-1)
+  \item Subsequent MapMatching Process at a junction (SMP-2)
+\end{itemize}
+Each of this processes uses a Fuzzy Inference System (FIS) for the
+link identification.
+
+A detailed description of the fuzzy logic map matching
+algorithm and the FIS can be found in \cite{quddusphd}.
+
+\section{Usage}
+<<a, echo=FALSE, results=hide, print=FALSE>>=
+library(fuzzyMM)
+importEnviroCar = function(file) {
+  require(rjson) # fromJSON
+  require(maptools) # spCbind
+  require(rgdal) #readOGR
+  require(RCurl) #getURL
+  require(stringr) #str_replace_all
+  
+  # read data as spatial object:
+  layer = readOGR(getURL(file,ssl.verifypeer = FALSE), layer = "OGRGeoJSON")
+  
+  # convert time from text to POSIXct:
+  layer$time = as.POSIXct(layer$time, format="%Y-%m-%dT%H:%M:%SZ")
+  # the third column is JSON, we want it in a table (data.frame) form:
+  # 1. form a list of lists
+  l1 = lapply(as.character(layer[[3]]), fromJSON)
+  # 2. parse the $value elements in the sublist:
+  l2 = lapply(l1,function(x) as.data.frame(lapply(x, function(X) X$value)))
+
+  # thanks to Kristina Helle!
+  # dynamic parsing of phenomenon names and units
+  phenomenonsUrl = "https://www.envirocar.org/api/stable/phenomenons"
+  phenomenons = fromJSON(getURL(phenomenonsUrl,ssl.verifypeer = FALSE))
+
+  
+  colNames <- c("GPS.Bearing", "GPS.HDOP", "GPS.Speed")
+  if (!all(colNames %in% names(l2[[1]]))) 
+    stop("Track does not contain all the necessary data (GPS.Bearing, GPS.HDOP, GPS.Speed)")
+  else
+    colNames <- names(l2[[1]])
+  
+    
+  resultMatrix = matrix(nrow = length(l2),ncol = length(colNames))
+  dimnames(resultMatrix)[[2]] = colNames
+  for (i in seq(along = l2))
+    resultMatrix[i,colNames] = as.numeric(l2[[i]])[match(colNames, names(l2[[i]]))]
+  result = as.data.frame(resultMatrix)
+  
+  # set the units:
+  units <- sapply(phenomenons[[1]], "[[", "unit")
+  names(units)=colNames
+  
+  # add a units attribute to layer
+  layer[[3]] = NULL
+  # add the table as attributes to the spatial object
+  if (length(layer) == nrow(result)) {
+    layer = spCbind(layer, result)
+    attr(layer, "units") = units
+    layer
+  } else
+    NULL
+}
+
+url = "https://envirocar.org/api/stable/tracks/52b45583e4b0f9afbd29bb6b"
+track = importEnviroCar(url)
+roads <- create_drn(bbox(track))
+@
+\subsection{Map Matching}
+The GPS trajectory must be a {\tt SpatialPointsDataFrame}.
+It must include following data to be processed by the algorithm:
+\begin{itemize}
+  \item GPS.Speed in km/h
+  \item GPS.Bearing
+  \item GPS.HDOP
+  \item time as ``POSIXct'' or ``POSIXlt''
+\end{itemize}
+Additionally a projection must be specified.
+<<eval=TRUE, echo=TRUE>>=
+names(track)
+proj4string(track)
+@
+As you can see in Figure~\ref{fig:track} some of the points of our GPS
+track are not located on the roads.
+
+\begin{figure}[h!]
+  \centering
+<<echo=FALSE,print=FALSE,fig=TRUE>>= 
+plot(track$coords.x1[1:6], track$coords.x2[1:6], pch = 16, col="blue")
+lines(roads@sl)
+@
+  \caption{Inaccurate GPS track}
+  \label{fig:track}
+\end{figure}
+Applying the {\tt mm} function uses the fuzzy logic map matching algorithm
+to reconcile the GPS track with the digital road network.
+<<b, echo=TRUE, eval=TRUE>>=
+matched_track <- mm(track)
+@
+The result is {\tt SpatialPointsDataFrame} containing the the new map matched 
+positions as can be seen in Figure~\ref{fig:matched_track}.
+\begin{figure}[h!]
+  \centering
+<<echo=FALSE,print=FALSE,fig=TRUE>>= 
+plot(track$coords.x1[1:6], track$coords.x2[1:6], pch = 16, col="blue")
+lines(roads@sl)
+points(matched_track$coords.x1, matched_track$coords.x2,pch=16, col = "red")
+@
+  \caption{Result after Map Matching}
+  \label{fig:matched_track}
+\end{figure}
+\newpage
+\subsection{Adjusting Membership Functions}
+It is possible to adjust the membership functions, used in the FIS, to your needs
+by changing the range of the fuzzy subsets of the input variables.
+Membership functions are used to fuzzify the input variables of the FIS, which 
+means assigning them to values between 0 and 1.
+It is recommended to read \cite{quddusphd} to understand how input variables, fuzzy
+subsets and membership functions work together.
+
+To see the current range of the fuzzy subsets use
+<<echo=TRUE, print=TRUE>>=
+get_var_bounds()
+@
+These bounds represent the x values at which the sigmoidal membership functions reach
+$\approx$0~or~$\approx$1 respectively(e.g. ``speed is high'' ranges from 3~to~6~m/s).
+
+You can change the bounds using set\_var\_bounds(name, bounds).
+<<echo=TRUE>>=
+set_var_bounds("speed_high", c(4, 7))
+@
+When everything is set to you needs, update the membership functions and
+reinitialize the FIS.
+<<echo=TRUE>>=
+update_mf()
+@
+The parameters of the membership functions and all additional information regarding
+the FIS can be acquired by getting the FIS of IMP, SMP1 or SMP2.
+<<d,echo=TRUE>>=
+fis_imp <- get_fis("IMP")
+str(fis_imp)
+fis_imp$varinp.mf
+@
+It is also possible to plot the membership functions.
+<<echo=TRUE,fig=FALSE>>=
+plotMF(fis_imp)
+@
+\begin{figure}[h!]
+  \centering
+<<echo=FALSE,fig=TRUE>>=
+plotMF(fis_imp)
+@
+  \caption{Membership Functions}
+  \label{fig:mf}
+\end{figure}
+
+
+
+\newpage
+\begin{thebibliography}{1}
+\bibitem[\protect\citename{Quddus, }2006]{quddusphd}
+Quddus, Mohammed~A. 2006 (January).
+\newblock {\em High Integrity Map Matching Algorithms for Advanced Transport
+  Telematics Applications}.
+\newblock Ph.D. thesis, Imperial College London, United Kingdom.
+\end{thebibliography}
+\end{document}

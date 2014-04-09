@@ -1,0 +1,22 @@
+\name{get_fis}
+\alias{get_fis}
+\title{Get Fuzzy Inference System}
+\usage{
+get_fis(name = c("IMP", "SMP1", "SMP2"))
+}
+\arguments{
+  \item{name}{Name of the process: IMP, SMP1 or SMP2}
+}
+\description{
+Get the Fuzzy Inference System for IMP, SMP1 or SMP2.
+}
+\examples{
+fis_imp <- get_fis("IMP")
+fis_imp
+# Plot membership functions
+plotMF(fis_imp)
+}
+\author{
+Nikolai Gorte <n.gorte@gmail.com>
+}
+

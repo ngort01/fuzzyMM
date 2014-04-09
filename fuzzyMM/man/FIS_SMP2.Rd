@@ -1,0 +1,53 @@
+\docType{data}
+\name{FIS_SMP2}
+\alias{FIS_SMP2}
+\title{Fuzzy Inference System 3 (FIS3)}
+\format{frbs object}
+\description{
+Fuzzy Inference System used in the Subsequent Map Matching
+Process at a junction (SMP-2).
+}
+\details{
+SMP-2 identifies a new link among the candidate links if
+the vehicle has crossed a junction. Here you can see the
+input variables, fuzzy subsets and fuzzy rules used in
+FIS3. It is usefull to know the variables and how they
+affect the rule outputs in case you plan to change the
+range of the fuzzy subsets.
+
+Input variables to this FIS are: \itemize{ \item speed of
+the vehicle, v (m/s) \item heading error, HE (degrees)
+\item perpendicular distance to candidate link, PD (m)
+\item horizontal dilution of precision (HDOP) \item link
+connectivity \item distance error }
+
+The fuzzy subsets of the input variables are: \itemize{
+\item high, low, zero \item small, large \item short, long
+\item good, bad \item indirect, direct \item small2, large2
+}
+
+The corresponding fuzzy rules used in this FIS are:
+\itemize{ \item If ( v is high) and (HE is small) then (L1
+is average) \item If (v is high) and (HE is large) then (L1
+is low) \item If (HDOP is good) and (PD is short) then (L1
+is average) \item If (HDOP is good) and (PD is long) then
+(L1 is low) \item If ( HE is small) and (PD is short) then
+( L1 is high) \item If ( HE is large) and ( PD is long)
+then (L1 is low) \item If (The connectivity with the
+previous link is low) then (The L3 is low) \item If (The
+connectivity with the previous link is high) then (The L3
+is high) \item If (The distance error is low) then (The L3
+is high) \item If (The distance error is high) then (The L3
+is low) }
+}
+\examples{
+fis_smp2 <- get_fis("SMP2")
+fis_smp2
+# Plot membership functions
+plotMF(fis_smp2)
+}
+\seealso{
+\link{get_var_bounds}, \link{set_var_bounds}
+}
+\keyword{datasets}
+

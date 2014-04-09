@@ -1,0 +1,38 @@
+Package: fuzzyMM
+Type: Package
+Title: Map Matching Using a Fuzzy Logic Based Algorithm
+Version: 1.0
+Date: 2013-12-02
+Author: Nikolai Gorte 
+Description: fuzzyMM is a package that implements a fuzzy 
+             logic based map matching algorithm used to match GPS tracks to the 
+             OSM digital road network.
+Maintainer: Nikolai Gorte <n.gorte@gmail.com>
+Depends:
+    R (>= 2.15.0),
+    osmar,
+    frbs,
+Imports:
+    methods,
+    igraph,
+    rgeos,
+    rgdal,
+Suggests:
+    rjson,
+    maptools,
+    stringr,
+    RCurl,
+License: GPL (>= 2)
+Collate: 
+    var_bounds.R
+    fuzzy_model.R
+    FIS1.R
+    FIS2.R
+    FIS3.R
+    IMP.R
+    SMP1.R
+    SMP2.R
+    DRN.R
+    fuzzyMM.R
+    Data-track.R
+    fuzzyMM-package.R

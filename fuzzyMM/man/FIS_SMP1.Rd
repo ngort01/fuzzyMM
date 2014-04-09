@@ -1,0 +1,66 @@
+\docType{data}
+\name{FIS_SMP1}
+\alias{FIS_SMP1}
+\title{Fuzzy Inference System 2 (FIS2)}
+\format{frbs object}
+\description{
+Fuzzy Inference System used in the Subsequent Map Matching
+Process along a link (SMP-1).
+}
+\details{
+SMP-1 checks if the vehicle has already crossed a junction
+or is about to cross one and matches subsequent positions
+to the link identified by the IMP if that is not the case.
+Here you can see the input variables, fuzzy subsets and
+fuzzy rules used in FIS2. It is usefull to know the
+variables and how they affect the rule outputs in case you
+plan to change the range of the fuzzy subsets.
+
+Input variables to this FIS are: \itemize{ \item speed of
+the vehicle, v (m/s) \item horizontal dilution of precision
+(HDOP) \item \eqn{\Delta d (m),} the difference between the
+distance from the last matched position to the downstream
+junction and the distance travelled by the vehicle since
+the last position fix \item heading increment, HI (degrees)
+\item \eqn{\alpha and \beta (degrees),} location of the
+current position fix, relative to the link, seen from the
+last matched position and from the downstream junction
+respectively }
+
+The fuzzy subsets of the input variables are: \itemize{
+\item high, low, zero \item good, bad \item positiv,
+negativ \item small, large, 180 \item below90, above90 }
+
+The corresponding fuzzy rules used in this FIS are:
+\itemize{ \item If (\eqn{\alpha} is below 90 ) and
+(\eqn{\beta} is below 90 degrees) then ( L2 is high) \item
+If (\eqn{\Delta} d is positive) and (\eqn{\alpha} is above
+90 degrees) then ( L2 is low) \item If (\eqn{\Delta} d is
+positive) and (\eqn{\beta} is above 90 degrees) then ( L2
+is low) \item If (HI is small) and (\eqn{\alpha} is below
+90 degrees) and (\eqn{\beta} is below 90 degrees) then (L2
+is high) \item If (HI is small) and (\eqn{\Delta}d is
+positive) and (\eqn{\alpha} is above 90 degrees) then (L2
+is low) \item If (HI is small) and (\eqn{\Delta}d is
+positive) and (\eqn{\beta} is above 90 degrees) then (L2 is
+low) \item If (HI is large) and (\eqn{\alpha} is below 90
+degrees) and (\eqn{\beta} is below 90 degrees) then (L2 is
+low) \item If (HDOP is good) and (v is zero) then (L2 is
+high) \item If (HDOP is good) and (\eqn{\Delta}d is
+negative) then (L2 is average) \item If (HDOP is good) and
+(\eqn{\Delta}d is positive) then (L2 is low) \item If (v is
+high) and (HI is small) then (L2 is average) \item If (HDOP
+is good) and (v is high) and (HI is 180 degrees) then (L2
+is high) }
+}
+\examples{
+fis_smp1 <- get_fis("SMP1")
+fis_smp1
+# Plot membership functions
+plotMF(fis_smp1)
+}
+\seealso{
+\link{get_var_bounds}, \link{set_var_bounds}
+}
+\keyword{datasets}
+

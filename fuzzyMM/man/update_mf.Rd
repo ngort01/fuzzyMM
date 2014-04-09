@@ -1,0 +1,21 @@
+\name{update_mf}
+\alias{update_mf}
+\title{Update Membership Functions}
+\usage{
+update_mf()
+}
+\description{
+This function updates the membership functions after the
+bounds of the fuzzy subsets are changed and reinitializes
+the fuzzy interference systems.
+}
+\examples{
+update_mf()
+}
+\author{
+Nikolai Gorte <n.gorte@gmail.com>
+}
+\seealso{
+\link{FIS_IMP}, \link{FIS_SMP1}, \link{FIS_SMP2}
+}
+
