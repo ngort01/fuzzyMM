@@ -32,6 +32,8 @@ smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link,
   candidate_links$V2 <- get.edgelist(roads@g)[candidate_links$edge_id, 2]
   candidate_links <- candidate_links[!candidate_links$edge_id == edge_id,]
  
+  from <- function(x) x # keep R CMD check happy
+
   # Check if the line segments are connected to the prev_link
   candidate_links$conn <- sapply(candidate_links[,c("edge_id")],                         
                                  function(x) {

@@ -4,9 +4,7 @@ Title: Map Matching Using a Fuzzy Logic Based Algorithm
 Version: 1.0
 Date: 2013-12-02
 Author: Nikolai Gorte 
-Description: fuzzyMM is a package that implements a fuzzy 
-             logic based map matching algorithm used to match GPS tracks to the 
-             OSM digital road network.
+Description: match GPS tracks to the OpenStreetMap digital road network, using a fuzzy logic based algorithm
 Maintainer: Nikolai Gorte <n.gorte@gmail.com>
 Depends:
     R (>= 2.15.0),
