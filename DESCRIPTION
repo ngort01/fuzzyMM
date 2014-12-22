@@ -1,7 +1,7 @@
 Package: fuzzyMM
 Type: Package
 Title: Map Matching Using Fuzzy Logic 
-Version: 1.0.1
+Version: 1.0.2
 Date: 2014-07-15
 Author: Nikolai Gorte 
 Description: Implements a fuzzy-logic-based map-matching algorithm used to match GPS 

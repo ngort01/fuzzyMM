@@ -6,6 +6,7 @@
 #' @param traj \link[sp]{SpatialPointsDataFrame-class} containing the GPS trajectories.
 #'              See Details for additional info.
 #' @param plot boolean. Matched trajectory will be plotted if true.
+#' @param ... not used.
 #' 
 #' @details
 #' \bold{mm} is the main function of this package.
@@ -57,8 +58,16 @@
 #' data(traj)
 #' matched_traj <- mm(traj, plot = TRUE)
 #' }
-#' @export 
-mm <- function(traj, plot = FALSE) {
+#' @export
+#' @rdname mm
+setGeneric(
+  name = "mm",
+  def = function(traj, ...) standardGeneric("mm")
+)
+
+
+#' @rdname mm
+mm.SpatialPointsDataFrame <- function(traj, plot = FALSE) {
   if (!is(traj, "SpatialPointsDataFrame")) 
     stop ("Not a SpatialPointsDataFrame object!")
   if (is.null(proj4string(traj)))
@@ -117,6 +126,8 @@ mm <- function(traj, plot = FALSE) {
 }
 
 
+#' @rdname mm
+setMethod("mm", signature("SpatialPointsDataFrame"), mm.SpatialPointsDataFrame)
 
 
 
