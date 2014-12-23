@@ -143,3 +143,17 @@ mm.Track <- function(traj, plot = FALSE) {
 
 #' @rdname mm
 setMethod("mm", signature("Track"), mm.Track)
+
+
+#' @rdname mm
+mm.Tracks <- function(traj, plot = FALSE) {
+  require(trajectories)
+  tracks <- list()
+  for (i in 1:dim(traj)[[1]]) {
+    tracks[i] <- mm(traj[1]) 
+  }
+  tracks <- Tracks(tracks)
+}
+
+#' @rdname mm
+setMethod("mm", signature("Tracks"), mm.Tracks)

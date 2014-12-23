@@ -5,8 +5,10 @@
 \alias{mm}
 \alias{mm,SpatialPointsDataFrame-method}
 \alias{mm,Track-method}
+\alias{mm,Tracks-method}
 \alias{mm.SpatialPointsDataFrame}
 \alias{mm.Track}
+\alias{mm.Tracks}
 \title{Map Matching}
 \usage{
 mm(traj, ...)
@@ -18,6 +20,10 @@ mm.SpatialPointsDataFrame(traj, plot = FALSE)
 mm.Track(traj, plot = FALSE)
 
 \S4method{mm}{Track}(traj, plot = FALSE)
+
+mm.Tracks(traj, plot = FALSE)
+
+\S4method{mm}{Tracks}(traj, plot = FALSE)
 }
 \arguments{
 \item{traj}{\link[sp]{SpatialPointsDataFrame-class} containing the GPS trajectories.
