@@ -3,8 +3,8 @@
 #' Function that matches GPS trajectories to the OSM digital road network
 #' using a fuzzy logic map matching algorithm.
 #' 
-#' @param traj \link[sp]{SpatialPointsDataFrame-class} containing the GPS trajectories.
-#'              See Details for additional info.
+#' @param traj \link[sp]{SpatialPointsDataFrame-class} or one of the \link{Track} 
+#'              classes containing the GPS trajectories. See Details for additional info.
 #' @param plot boolean. Matched trajectory will be plotted if true.
 #' @param ... not used.
 #' 
@@ -138,7 +138,6 @@ mm.Track <- function(traj, plot = FALSE) {
   track_points <- SpatialPoints(coordinates(track),CRS(proj4string(track)))
   track <- STIDF(track_points, traj@time, track@data)
   track <- Track(track)
-  track
 }
 
 #' @rdname mm
@@ -150,10 +149,24 @@ mm.Tracks <- function(traj, plot = FALSE) {
   require(trajectories)
   tracks <- list()
   for (i in 1:dim(traj)[[1]]) {
-    tracks[i] <- mm(traj[1]) 
+    tracks[i] <- mm(traj[i]) 
   }
   tracks <- Tracks(tracks)
 }
 
 #' @rdname mm
 setMethod("mm", signature("Tracks"), mm.Tracks)
+
+
+#' @rdname mm
+mm.TracksCollection <- function(traj, plot = FALSE) {
+  require(trajectories)
+  trcol <- list()
+  for (i in 1:dim(traj)[[1]]) {
+    trcol[i] <- mm(traj[i])
+  }
+  trcol<- TracksCollection(trcol)
+}
+
+#' @rdname mm
+setMethod("mm", signature("TracksCollection"), mm.TracksCollection)

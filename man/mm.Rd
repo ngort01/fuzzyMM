@@ -6,9 +6,11 @@
 \alias{mm,SpatialPointsDataFrame-method}
 \alias{mm,Track-method}
 \alias{mm,Tracks-method}
+\alias{mm,TracksCollection-method}
 \alias{mm.SpatialPointsDataFrame}
 \alias{mm.Track}
 \alias{mm.Tracks}
+\alias{mm.TracksCollection}
 \title{Map Matching}
 \usage{
 mm(traj, ...)
@@ -24,10 +26,14 @@ mm.Track(traj, plot = FALSE)
 mm.Tracks(traj, plot = FALSE)
 
 \S4method{mm}{Tracks}(traj, plot = FALSE)
+
+mm.TracksCollection(traj, plot = FALSE)
+
+\S4method{mm}{TracksCollection}(traj, plot = FALSE)
 }
 \arguments{
-\item{traj}{\link[sp]{SpatialPointsDataFrame-class} containing the GPS trajectories.
-See Details for additional info.}
+\item{traj}{\link[sp]{SpatialPointsDataFrame-class} or one of the \link{Track}
+classes containing the GPS trajectories. See Details for additional info.}
 
 \item{...}{not used.}
 
