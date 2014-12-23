@@ -130,5 +130,16 @@ mm.SpatialPointsDataFrame <- function(traj, plot = FALSE) {
 setMethod("mm", signature("SpatialPointsDataFrame"), mm.SpatialPointsDataFrame)
 
 
+#' @rdname mm
+mm.Track <- function(traj, plot = FALSE) {
+  require(trajectories)
+  track <- SpatialPointsDataFrame(traj@sp, traj@data, proj4string=proj4string(traj), bbox = bbox(traj))
+  track <- mm(track, plot)
+  track_points <- SpatialPoints(coordinates(track),CRS(proj4string(track)))
+  track <- STIDF(track_points, traj@time, track@data)
+  track <- Track(track)
+  track
+}
 
-
+#' @rdname mm
+setMethod("mm", signature("Track"), mm.Track)

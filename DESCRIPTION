@@ -21,6 +21,7 @@ Suggests:
     maptools,
     stringr,
     RCurl,
+    trajectories,
 License: GPL (>= 2)
 Collate: 
     var_bounds.R
