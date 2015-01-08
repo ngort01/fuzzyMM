@@ -15,29 +15,31 @@
 \usage{
 mm(traj, ...)
 
-mm.SpatialPointsDataFrame(traj, plot = FALSE)
+mm.SpatialPointsDataFrame(traj, plot = FALSE, DRN = NULL)
 
-\S4method{mm}{SpatialPointsDataFrame}(traj, plot = FALSE)
+\S4method{mm}{SpatialPointsDataFrame}(traj, plot = FALSE, DRN = NULL)
 
-mm.Track(traj, plot = FALSE)
+mm.Track(traj, plot = FALSE, DRN = NULL)
 
-\S4method{mm}{Track}(traj, plot = FALSE)
+\S4method{mm}{Track}(traj, plot = FALSE, DRN = NULL)
 
-mm.Tracks(traj, plot = FALSE)
+mm.Tracks(traj, plot = FALSE, DRN = NULL)
 
-\S4method{mm}{Tracks}(traj, plot = FALSE)
+\S4method{mm}{Tracks}(traj, plot = FALSE, DRN = NULL)
 
-mm.TracksCollection(traj, plot = FALSE)
+mm.TracksCollection(traj, plot = FALSE, DRN = NULL)
 
-\S4method{mm}{TracksCollection}(traj, plot = FALSE)
+\S4method{mm}{TracksCollection}(traj, plot = FALSE, DRN = NULL)
 }
 \arguments{
-\item{traj}{\link[sp]{SpatialPointsDataFrame-class} or one of the \link{Track}
+\item{traj}{\link[sp]{SpatialPointsDataFrame-class} or one of the \link[trajectories]{Track}
 classes containing the GPS trajectories. See Details for additional info.}
 
 \item{...}{not used.}
 
 \item{plot}{boolean. Matched trajectory will be plotted if true.}
+
+\item{DRN}{optional DigitalRoadNetwork that should be used.}
 }
 \description{
 Function that matches GPS trajectories to the OSM digital road network

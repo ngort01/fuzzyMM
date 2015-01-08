@@ -3,9 +3,10 @@
 #' Function that matches GPS trajectories to the OSM digital road network
 #' using a fuzzy logic map matching algorithm.
 #' 
-#' @param traj \link[sp]{SpatialPointsDataFrame-class} or one of the \link{Track} 
+#' @param traj \link[sp]{SpatialPointsDataFrame-class} or one of the \link[trajectories]{Track} 
 #'              classes containing the GPS trajectories. See Details for additional info.
 #' @param plot boolean. Matched trajectory will be plotted if true.
+#' @param DRN optional DigitalRoadNetwork that should be used. 
 #' @param ... not used.
 #' 
 #' @details
@@ -67,7 +68,7 @@ setGeneric(
 
 
 #' @rdname mm
-mm.SpatialPointsDataFrame <- function(traj, plot = FALSE) {
+mm.SpatialPointsDataFrame <- function(traj, plot = FALSE, DRN = NULL) {
   if (!is(traj, "SpatialPointsDataFrame")) 
     stop ("Not a SpatialPointsDataFrame object!")
   if (is.null(proj4string(traj)))
@@ -82,7 +83,11 @@ mm.SpatialPointsDataFrame <- function(traj, plot = FALSE) {
   bbox <- bbox(traj)
   
   # Create digital road network
-  roads <- create_drn(bbox)
+  if (!is(DRN, "DigitalRoadNetwork")) 
+    roads <- create_drn(bbox)
+  else {
+    roads <- DRN
+  }
 
   traj <- as(traj, "data.frame")
   traj$OSM_ID <- 0
@@ -131,7 +136,7 @@ setMethod("mm", signature("SpatialPointsDataFrame"), mm.SpatialPointsDataFrame)
 
 
 #' @rdname mm
-mm.Track <- function(traj, plot = FALSE) {
+mm.Track <- function(traj, plot = FALSE, DRN = NULL) {
   require(trajectories)
   track <- SpatialPointsDataFrame(traj@sp, traj@data, proj4string=proj4string(traj), bbox = bbox(traj))
   track <- mm(track, plot)
@@ -145,7 +150,7 @@ setMethod("mm", signature("Track"), mm.Track)
 
 
 #' @rdname mm
-mm.Tracks <- function(traj, plot = FALSE) {
+mm.Tracks <- function(traj, plot = FALSE, DRN = NULL) {
   require(trajectories)
   tracks <- list()
   for (i in 1:dim(traj)[[1]]) {
@@ -159,7 +164,7 @@ setMethod("mm", signature("Tracks"), mm.Tracks)
 
 
 #' @rdname mm
-mm.TracksCollection <- function(traj, plot = FALSE) {
+mm.TracksCollection <- function(traj, plot = FALSE, DRN = NULL) {
   require(trajectories)
   trcol <- list()
   for (i in 1:dim(traj)[[1]]) {
