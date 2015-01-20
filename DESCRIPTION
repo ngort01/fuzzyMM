@@ -15,12 +15,11 @@ Imports:
     igraph,
     rgeos,
     rgdal,
+	RCurl, XML, geosphere, sp, spacetime, trajectories
 Suggests:
     rjson,
     maptools,
     stringr,
-    RCurl,
-    trajectories,
 License: GPL (>= 2)
 Collate: 
     var_bounds.R

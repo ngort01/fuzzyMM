@@ -23,5 +23,5 @@
 #' 
 #' @docType package
 #' @name fuzzyMM-package
-#' @import methods igraph rgeos rgdal frbs osmar
+#' @import methods igraph sp spacetime trajectories geosphere rgeos rgdal frbs RCurl XML osmar
 NULL
