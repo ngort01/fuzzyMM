@@ -1,7 +1,7 @@
 % \VignetteIndexEntry{Introduction to fuzzyMM}
 \documentclass[titlepage]{article}
 \usepackage{Sweave}
-\usepackage[hidelinks]{hyperref}
+\usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage{amssymb}
