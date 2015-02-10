@@ -48,7 +48,8 @@ using a fuzzy logic map matching algorithm.
 \details{
 \bold{mm} is the main function of this package.
 The input to the function is a \link[sp]{SpatialPointsDataFrame-class}
-containing the GPS trajectory that needs to be matched to a digital road network.
+or one of the \link[trajectories]{Track} classes
+containing the GPS trajectory that should be map matched.
 
 To succesfully apply the map matching algorithm the data part of the
 trajectories must include data for HDOP, Speed and Bearing, with the columns
@@ -78,8 +79,16 @@ algorithm and the FIS can be found in Quddus (2006).
 }
 \examples{
 \dontrun{
-data(traj)
+data(traj) ## SpatialPointsDataFrame
 matched_traj <- mm(traj, plot = TRUE)
+
+## Create Track
+require(trajectories)
+require(spacetime)
+traj_points <- SpatialPoints(coordinates(traj),CRS(proj4string(traj)))
+track <- STIDF(traj_points, traj$time, data@data)
+track <- Track(track)
+matched_track <- mm(track, plot = TRUE)
 }
 }
 \author{

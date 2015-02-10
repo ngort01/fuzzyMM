@@ -12,7 +12,8 @@
 #' @details
 #' \bold{mm} is the main function of this package.
 #' The input to the function is a \link[sp]{SpatialPointsDataFrame-class} 
-#' containing the GPS trajectory that needs to be matched to a digital road network.
+#' or one of the \link[trajectories]{Track} classes
+#' containing the GPS trajectory that should be map matched.
 #' 
 #' To succesfully apply the map matching algorithm the data part of the 
 #' trajectories must include data for HDOP, Speed and Bearing, with the columns 
@@ -44,7 +45,7 @@
 #' 
 #' @author Nikolai Gorte <n.gorte@@gmail.com>
 #' 
-#'  @seealso
+#' @seealso
 #' \code{\link{FIS_IMP}}, \code{\link{FIS_SMP1}}, \code{\link{FIS_SMP2}},
 #' \code{\link{get_fis}}, \code{\link{frbs}}
 #' 
@@ -55,9 +56,17 @@
 #' 
 #' 
 #' @examples
-#' \dontrun{
-#' data(traj)
+#' \dontrun{  
+#' data(traj) ## SpatialPointsDataFrame
 #' matched_traj <- mm(traj, plot = TRUE)
+#' 
+#' ## Create Track
+#' require(trajectories)
+#' require(spacetime)
+#' traj_points <- SpatialPoints(coordinates(traj),CRS(proj4string(traj)))
+#' track <- STIDF(traj_points, traj$time, data@@data)
+#' track <- Track(track)
+#' matched_track <- mm(track, plot = TRUE)
 #' }
 #' @export
 #' @rdname mm
@@ -143,6 +152,7 @@ mm.Track <- function(traj, plot = FALSE, DRN = NULL) {
   track_points <- SpatialPoints(coordinates(track),CRS(proj4string(track)))
   track <- STIDF(track_points, traj@time, track@data)
   track <- Track(track)
+  track
 }
 
 #' @rdname mm
@@ -157,6 +167,7 @@ mm.Tracks <- function(traj, plot = FALSE, DRN = NULL) {
     tracks[i] <- mm(traj[i]) 
   }
   tracks <- Tracks(tracks)
+  tracks
 }
 
 #' @rdname mm
@@ -170,7 +181,8 @@ mm.TracksCollection <- function(traj, plot = FALSE, DRN = NULL) {
   for (i in 1:dim(traj)[[1]]) {
     trcol[i] <- mm(traj[i])
   }
-  trcol<- TracksCollection(trcol)
+  trcol <- TracksCollection(trcol)
+  trcol
 }
 
 #' @rdname mm
