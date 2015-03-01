@@ -92,9 +92,9 @@ mm.SpatialPointsDataFrame <- function(traj, plot = FALSE, DRN = NULL) {
   bbox <- bbox(traj)
   
   # Create digital road network
-  if (!is(DRN, "DigitalRoadNetwork")) 
+  if (!is(DRN, "DigitalRoadNetwork")) {
     roads <- create_drn(bbox)
-  else {
+  } else {
     roads <- DRN
   }
 

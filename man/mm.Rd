@@ -86,7 +86,7 @@ matched_traj <- mm(traj, plot = TRUE)
 require(trajectories)
 require(spacetime)
 traj_points <- SpatialPoints(coordinates(traj),CRS(proj4string(traj)))
-track <- STIDF(traj_points, traj$time, data@data)
+track <- STIDF(traj_points, traj$time, traj@data)
 track <- Track(track)
 matched_track <- mm(track, plot = TRUE)
 }
