@@ -110,20 +110,20 @@ mm.SpatialPointsDataFrame <- function(traj, plot = FALSE, DRN = NULL) {
   # Map match remainig points using SMP1 and SMP2
   for (j in pt_index:nrow(edit_traj)) {
     # Check the possibility of matching the next point on the current link
-    pred_val <- smp1(edit_traj, roads, current_link, pt_index)$predicted.val
+    pred_val <- smp1(edit_traj, roads, current_link, j)$predicted.val
     if (pred_val >= 60) {
-      PD <- dist2Line(edit_traj[,c("coords.x1", "coords.x2")][pt_index,], 
+      PD <- dist2Line(edit_traj[,c("coords.x1", "coords.x2")][j,], 
                       roads@sl@lines[[current_link$edge_id]]@Lines[[1]]@coords)
-      edit_traj$coords.x1[pt_index] <- PD[2]
-      edit_traj$coords.x2[pt_index] <- PD[3]
-      edit_traj$OSM_ID[pt_index] <- traj$OSM_ID[pt_index - 1]
-      pt_index <- pt_index + 1
+      edit_traj$coords.x1[j] <- PD[2]
+      edit_traj$coords.x2[j] <- PD[3]
+      edit_traj$OSM_ID[j] <- edit_traj$OSM_ID[j - 1]
+      #pt_index <- pt_index + 1
     } else {
-      current_link <- smp2(edit_traj, roads, current_link, pt_index)
-      edit_traj$coords.x1[pt_index] <- current_link$NP_x
-      edit_traj$coords.x2[pt_index] <- current_link$NP_y
-      edit_traj$OSM_ID[pt_index] <- E(roads@g)[current_link$edge_id]$name
-      pt_index <- pt_index + 1
+      current_link <- smp2(edit_traj, roads, current_link, j)
+      edit_traj$coords.x1[j] <- current_link$NP_x
+      edit_traj$coords.x2[j] <- current_link$NP_y
+      edit_traj$OSM_ID[j] <- E(roads@g)[current_link$edge_id]$name
+      #pt_index <- pt_index + 1
     }
   }
   

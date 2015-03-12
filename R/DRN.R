@@ -70,7 +70,7 @@ create_drn <- function(bbox) {
 
 
 setClass("igraph")
-setClass("DigitalRoadNetwork", representation(sl = "SpatialLines", g = "igraph"), 
+setClass("DigitalRoadNetwork", representation(sl = "SpatialLinesDataFrame", g = "igraph"), 
          validity = function(object) {stopifnot(length(object@sl) == length(E(object@g)))})
 
 
@@ -86,8 +86,10 @@ setClass("DigitalRoadNetwork", representation(sl = "SpatialLines", g = "igraph")
 #############################################################################################################
 lines2segments <- function(sl){
   coords <- coordinates(sl)
+  osm_ids <- sl@data$id # osm edge ids
   in_nrows <- lapply(coords, function(x) sapply(x, nrow))
   outn <- sapply(in_nrows, function(y) sum(y-1))
+  osm_ids <- rep(osm_ids, outn)
   res <- vector(mode = "list", length = sum(outn))
   i <- 1
   for (j in seq(along = coords)) {
@@ -101,5 +103,7 @@ lines2segments <- function(sl){
   res1 <- vector(mode = "list", length = sum(outn))
   for (i in seq(along = res))
     res1[[i]] <- Lines(list(Line(res[[i]])), as.character(i))
-  outSL <- SpatialLines(res1, osm_crs())   
+  outSL <- SpatialLines(res1, osm_crs())
+  outSL <- SpatialLinesDataFrame(outSL, data.frame(osm_ids))
+  outSL
 }
