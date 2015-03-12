@@ -21,3 +21,11 @@ example(mm)
 vignette("fuzzyMM")
 ```
 
+## Algorithm
+
+A detailed description of the algorithm can be found in:
+
+Quddus, Mohammed A. 2006 (January).  
+High Integrity Map Matching Algorithms for Advanced Transport Telematics Applications.  
+Ph.D. thesis, Imperial College London, United Kingdom.
+
