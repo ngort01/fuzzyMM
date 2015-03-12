@@ -92,7 +92,8 @@ track = importEnviroCar(url)
 roads <- create_drn(bbox(track))
 @
 \subsection{Map Matching}
-The GPS trajectory must be a {\tt SpatialPointsDataFrame}.
+The GPS trajectory must be a {\tt SpatialPointsDataFrame} as defined in {\tt sp}
+or one of the {\tt Track} classes defined in {\tt trajectories}.
 It must include following data to be processed by the algorithm:
 \begin{itemize}
   \item GPS.Speed in km/h
@@ -122,7 +123,7 @@ to reconcile the GPS track with the digital road network.
 <<b, echo=TRUE, eval=TRUE>>=
 matched_track <- mm(track)
 @
-The result is {\tt SpatialPointsDataFrame} containing the the new map matched 
+The result is an object of the same class as the input containing the the new map matched 
 positions as can be seen in Figure~\ref{fig:matched_track}.
 \begin{figure}[h!]
   \centering

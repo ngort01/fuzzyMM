@@ -146,7 +146,6 @@ setMethod("mm", signature("SpatialPointsDataFrame"), mm.SpatialPointsDataFrame)
 
 #' @rdname mm
 mm.Track <- function(traj, plot = FALSE, DRN = NULL) {
-  require(trajectories)
   track <- SpatialPointsDataFrame(traj@sp, traj@data, proj4string=proj4string(traj), bbox = bbox(traj))
   track <- mm(track, plot)
   track_points <- SpatialPoints(coordinates(track),CRS(proj4string(track)))
@@ -161,7 +160,6 @@ setMethod("mm", signature("Track"), mm.Track)
 
 #' @rdname mm
 mm.Tracks <- function(traj, plot = FALSE, DRN = NULL) {
-  require(trajectories)
   tracks <- list()
   for (i in 1:dim(traj)[[1]]) {
     tracks[i] <- mm(traj[i]) 
@@ -176,7 +174,6 @@ setMethod("mm", signature("Tracks"), mm.Tracks)
 
 #' @rdname mm
 mm.TracksCollection <- function(traj, plot = FALSE, DRN = NULL) {
-  require(trajectories)
   trcol <- list()
   for (i in 1:dim(traj)[[1]]) {
     trcol[i] <- mm(traj[i])
