@@ -2,7 +2,7 @@ Package: fuzzyMM
 Type: Package
 Title: Map Matching Using Fuzzy Logic 
 Version: 1.0.2
-Date: 2014-07-15
+Date: 2015-04-28
 Author: Nikolai Gorte 
 Description: match GPS tracks to the OpenStreetMap digital road network, using a fuzzy logic based algorithm
 Maintainer: Nikolai Gorte <n.gorte@gmail.com>
@@ -22,6 +22,7 @@ Suggests:
     stringr,
     RCurl,
 License: GPL (>= 2)
+URL: http://github.com/ngort01/fuzzyMM
 Collate: 
     var_bounds.R
     fuzzy_model.R
