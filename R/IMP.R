@@ -1,5 +1,5 @@
 ## Initial MapMatching Process: identifies the intial road link 
-imp <- function (traj, roads = "DigitalRoadNetwork") { 
+imp <- function (traj, roads = "DigitalRoadNetwork", err_region) { 
   i <- 1
   count <- 0
   found <- FALSE
@@ -11,7 +11,7 @@ imp <- function (traj, roads = "DigitalRoadNetwork") {
     lon <- traj$coords.x1[i] #lon
     lat <- traj$coords.x2[i] #lat
     current_pt <- cbind(lon, lat)
-    rec <- err_region(lon, lat)
+    rec <- err_region(lon, lat, err_region)
     
     # Get edges inside the error region 
     candidate_links <- data.frame(edge_id = unique(c(which(gIntersects(rec, roads@sl, byid = TRUE)), 
@@ -111,7 +111,7 @@ imp <- function (traj, roads = "DigitalRoadNetwork") {
 ##
 ## Returns:
 ##  Error region as SpatialPolygon
-err_region <- function(x, y) {  
+err_region <- function(x, y, size = 38) {  
   current_pt <- data.frame(x, y)
   coordinates(current_pt) <- ~x + y 
   proj4string(current_pt) <- osm_crs()
@@ -124,8 +124,8 @@ err_region <- function(x, y) {
   y <- coordinates(current_pt )[2]
   
   # Create the error region with fixed size and transform back to osm_crs()
-  x_rec <- c(x - 38, x + 38, x + 38, x - 38, x - 38)
-  y_rec <- c(y - 38, y - 38, y + 38, y + 38, y - 38)
+  x_rec <- c(x - size, x + size, x + size, x - size, x - size)
+  y_rec <- c(y - size, y - size, y + size, y + size, y - size)
   rec <- cbind(x_rec, y_rec)
   rec <- Polygons(list(Polygon(rec, hole = FALSE)), 1)
   rec <- SpatialPolygons(list(rec), proj4string = UTM)

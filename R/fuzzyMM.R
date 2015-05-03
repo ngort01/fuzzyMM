@@ -7,6 +7,7 @@
 #'              classes containing the GPS trajectories. See Details for additional info.
 #' @param plot boolean. Matched trajectory will be plotted if true.
 #' @param DRN optional DigitalRoadNetwork that should be used. 
+#' @param err_region Radius of a circle around a GPS position.
 #' @param ... not used.
 #' 
 #' @details
@@ -77,7 +78,7 @@ setGeneric(
 
 
 #' @rdname mm
-mm.SpatialPointsDataFrame <- function(traj, plot = FALSE, DRN = NULL) {
+mm.SpatialPointsDataFrame <- function(traj, plot = FALSE, DRN = NULL, err_region = 38) {
   if (!is(traj, "SpatialPointsDataFrame")) 
     stop ("Not a SpatialPointsDataFrame object!")
   if (is.null(proj4string(traj)))
@@ -88,6 +89,7 @@ mm.SpatialPointsDataFrame <- function(traj, plot = FALSE, DRN = NULL) {
     stop ("time must be of class POSIXct or POSIXlt!")
   
   traj <- spTransform(traj, osm_crs())
+  coordnames(traj) <- c("coords.x1", "coords.x2")
   traj@data[is.na(traj@data)] <- 0
   bbox <- bbox(traj)
   
@@ -102,7 +104,7 @@ mm.SpatialPointsDataFrame <- function(traj, plot = FALSE, DRN = NULL) {
   traj$OSM_ID <- 0
   
   # Execute the Initial Map-Matching Process (IMP)
-  list <- imp(traj, roads)
+  list <- imp(traj, roads, err_region)
   edit_traj <- list$traj
   pt_index <- list$index
   current_link <- list$current_link
@@ -119,7 +121,7 @@ mm.SpatialPointsDataFrame <- function(traj, plot = FALSE, DRN = NULL) {
       edit_traj$OSM_ID[j] <- edit_traj$OSM_ID[j - 1]
       #pt_index <- pt_index + 1
     } else {
-      current_link <- smp2(edit_traj, roads, current_link, j)
+      current_link <- smp2(edit_traj, roads, current_link, j, err_region)
       edit_traj$coords.x1[j] <- current_link$NP_x
       edit_traj$coords.x2[j] <- current_link$NP_y
       edit_traj$OSM_ID[j] <- E(roads@g)[current_link$edge_id]$name
@@ -145,7 +147,7 @@ setMethod("mm", signature("SpatialPointsDataFrame"), mm.SpatialPointsDataFrame)
 
 
 #' @rdname mm
-mm.Track <- function(traj, plot = FALSE, DRN = NULL) {
+mm.Track <- function(traj, plot = FALSE, DRN = NULL, err_region = 38) {
   track <- SpatialPointsDataFrame(traj@sp, traj@data, proj4string=proj4string(traj), bbox = bbox(traj))
   track <- mm(track, plot)
   track_points <- SpatialPoints(coordinates(track),CRS(proj4string(track)))
@@ -159,7 +161,7 @@ setMethod("mm", signature("Track"), mm.Track)
 
 
 #' @rdname mm
-mm.Tracks <- function(traj, plot = FALSE, DRN = NULL) {
+mm.Tracks <- function(traj, plot = FALSE, DRN = NULL, err_region = 38) {
   tracks <- list()
   for (i in 1:dim(traj)[[1]]) {
     tracks[i] <- mm(traj[i]) 
@@ -173,7 +175,7 @@ setMethod("mm", signature("Tracks"), mm.Tracks)
 
 
 #' @rdname mm
-mm.TracksCollection <- function(traj, plot = FALSE, DRN = NULL) {
+mm.TracksCollection <- function(traj, plot = FALSE, DRN = NULL, err_region = 38) {
   trcol <- list()
   for (i in 1:dim(traj)[[1]]) {
     trcol[i] <- mm(traj[i])

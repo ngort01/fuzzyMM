@@ -37,7 +37,7 @@ smp1 <- function (traj, roads = "DigitalRoadNetwork", current_link, pt_index = "
   
   # Distance travelled since last position fix
   t <- as.double(traj$time[pt_index] - traj$time[pt_index-1])
-  d2 <- (traj$Speed[pt_index]/3.6) * t
+  d2 <- (traj$GPS.Speed[pt_index]/3.6) * t
   
   # the difference between the distance from the last matched position to
   # the downstream junction and the distance travelled by the vehicle since

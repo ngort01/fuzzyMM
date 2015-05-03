@@ -1,9 +1,9 @@
 ## Subsequent MapMatching Process (SMP-2) at a junction 
-smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link, pt_index = "numeric") {
+smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link, pt_index = "numeric", err_region) {
     
   lon <- traj$coords.x1[pt_index] 
   lat <- traj$coords.x2[pt_index] 
-  rec <- err_region(lon, lat)
+  rec <- err_region(lon, lat, err_region)
 
   current_pt <- cbind(lon, lat)
   last_fix <- cbind(traj$coords.x1[pt_index - 1], traj$coords.x2[pt_index - 1])
@@ -108,7 +108,7 @@ smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link, pt_index = "n
   
   # Distance travelled since last position fix
   t <- as.double(traj$time[pt_index] - traj$time[pt_index-1])
-  d <- (traj$Speed[pt_index]/3.6) * t
+  d <- (traj$GPS.Speed[pt_index]/3.6) * t
   
   # Distance error
   candidate_links$dist_err <- apply(candidate_links[,c("sp", "d_link")], 1,
