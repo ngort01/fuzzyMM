@@ -9,18 +9,18 @@ Maintainer: Nikolai Gorte <n.gorte@gmail.com>
 Depends:
     R (>= 2.15.0),
     osmar,
-    frbs,
+    frbs
 Imports:
     methods,
     igraph,
     rgeos,
     rgdal,
-    trajectories,
+    trajectories
 Suggests:
     rjson,
     maptools,
     stringr,
-    RCurl,
+    RCurl
 License: GPL (>= 2)
 URL: http://github.com/ngort01/fuzzyMM
 Collate: 
