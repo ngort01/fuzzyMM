@@ -42,18 +42,20 @@ smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link, pt_index = "n
                                    if (isTRUE(any(as.vector(conn_edges) == x))) 1 else 0
                                    })
   
+  if (!requireNamespace("geosphere", quietly = TRUE))
+	stop("package geosphere required")
   # Calculate the perpendicular distance from the current point to all 
   # segments inside the error region and the closest point on the segments
   PD <- sapply(candidate_links[,c("edge_id")], 
-               function(x) dist2Line(current_pt, roads@sl@lines[[x]]@Lines[[1]]@coords))
+               function(x) geosphere::dist2Line(current_pt, roads@sl@lines[[x]]@Lines[[1]]@coords))
   
+  #str(PD) -- EP
   # Perpendicular distance
   candidate_links$PD <- PD[1,]
   # Nearest point
   candidate_links$NP_x <- PD[2,]
   candidate_links$NP_y <- PD[3,]
     
-  
   # Calculate the beraing of the segments
   # If a segment is defined by the points a and b, bearing can be:
   # bearing(a,b) or bearing(b,a)
@@ -61,7 +63,7 @@ smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link, pt_index = "n
   gps_bearing <- traj$GPS.Bearing[pt_index]
   candidate_links$direction <- sapply(candidate_links$edge_id, 
                                       function(x) {
-                                        bearing <- bearing(roads@sl@lines[[x]]@Lines[[1]]@coords[1,],
+                                        bearing <- geosphere::bearing(roads@sl@lines[[x]]@Lines[[1]]@coords[1,],
                                                            roads@sl@lines[[x]]@Lines[[1]]@coords[2,])
                                         if (bearing - gps_bearing <= -90) {
                                           bearing <- bearing + 180

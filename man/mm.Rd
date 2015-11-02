@@ -43,7 +43,7 @@ classes containing the GPS trajectories. See Details for additional info.}
 
 \item{DRN}{optional DigitalRoadNetwork that should be used.}
 
-\item{err_region}{Size of the error region created around a GPS position.}
+\item{err_region}{Radius of a circle around a GPS position.}
 }
 \description{
 Function that matches GPS trajectories to the OSM digital road network

@@ -29,13 +29,17 @@ create_drn <- function(bbox) {
   x2 <- bbox[[3]] 
   y2 <- bbox[[4]] 
   
+  if (!requireNamespace("RCurl", quietly = TRUE))
+	stop("package RCurl required")
   # Using overpass API, because it offers better possibilties for 
   # filtering data than the the OSM API
   url <- paste0("http://www.overpass-api.de/api/xapi?way[bbox=",x1,",",y1,",",x2,",",y2,"][highway=*]")  
-  response <- getURL(url, .encoding = "UTF-8")
+  response <- RCurl::getURL(url, .encoding = "UTF-8")
   
+  if (!requireNamespace("XML", quietly = TRUE))
+	stop("package XML required")
   # Parse Data
-  resp <- xmlParse(response)
+  resp <- XML::xmlParse(response)
   
   # Transform parsed data to osmar object
   roads <- as_osmar(resp)
