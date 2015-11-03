@@ -17,13 +17,15 @@ smp1 <- function (traj, roads = "DigitalRoadNetwork", current_link, pt_index = "
                                ,current_link$V1, current_link$V2)
   }
   
+  if (!requireNamespace("geosphere", quietly = TRUE))
+	stop("package geosphere required")
   # location of the current position fix, relative to the link, as seen from
   # the last matched position
-  alpha <- abs(bearing(last_fix, current_pt) - current_link$direction)
+  alpha <- abs(geosphere::bearing(last_fix, current_pt) - current_link$direction)
   
   # location of the current position fix, relative to the link, as seen from
   # the downstream junction
-  beta <- abs(bearing(current_pt, cbind(V(roads@g)[name == current_link_end]$lon,
+  beta <- abs(geosphere::bearing(current_pt, cbind(V(roads@g)[name == current_link_end]$lon,
                                     V(roads@g)[name == current_link_end]$lat))
               - current_link$direction)
   

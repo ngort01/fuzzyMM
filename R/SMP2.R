@@ -26,9 +26,11 @@ smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link, pt_index = "n
                                ,prev_link$V1, prev_link$V2)
   }
     
+  if (!requireNamespace("rgeos", quietly = TRUE))
+	stop("package rgeos required")
   # Get edges inside the error region 
-  candidate_links <- data.frame(edge_id = unique(c(which(gIntersects(rec, roads@sl, byid = TRUE)), 
-                                                   which(gContains(rec, roads@sl, byid = TRUE)))))
+  candidate_links <- data.frame(edge_id = unique(c(which(rgeos::gIntersects(rec, roads@sl, byid = TRUE)), 
+                                                   which(rgeos::gContains(rec, roads@sl, byid = TRUE)))))
   # Nodes of the candidate links
   candidate_links$V1 <- get.edgelist(roads@g)[candidate_links$edge_id, 1]
   candidate_links$V2 <- get.edgelist(roads@g)[candidate_links$edge_id, 2]
@@ -42,18 +44,31 @@ smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link, pt_index = "n
                                    if (isTRUE(any(as.vector(conn_edges) == x))) 1 else 0
                                    })
   
+  if (!requireNamespace("geosphere", quietly = TRUE))
+	stop("package geosphere required")
   # Calculate the perpendicular distance from the current point to all 
   # segments inside the error region and the closest point on the segments
+  #str(candidate_links[,c("edge_id")])
   PD <- sapply(candidate_links[,c("edge_id")], 
-               function(x) dist2Line(current_pt, roads@sl@lines[[x]]@Lines[[1]]@coords))
+            function(x) geosphere::dist2Line(current_pt, roads@sl@lines[[x]]@Lines[[1]]@coords)) 
   
-  # Perpendicular distance
-  candidate_links$PD <- PD[1,]
-  # Nearest point
-  candidate_links$NP_x <- PD[2,]
-  candidate_links$NP_y <- PD[3,]
+  #str(PD) -- EP: might be list(), which then breaks;
+  #str(class(PD))
+  str(candidate_links)
+  if (length(PD) == 0) {
+    # Perpendicular distance
+    #candidate_links$PD <- 1e9 # large
+    # Nearest point
+    #candidate_links$NP_x <- 0
+    #candidate_links$NP_y <- 0
+  } else {
+    # Perpendicular distance
+    candidate_links$PD <- PD[1,]
+    # Nearest point
+    candidate_links$NP_x <- PD[2,]
+    candidate_links$NP_y <- PD[3,]
+  }
     
-  
   # Calculate the beraing of the segments
   # If a segment is defined by the points a and b, bearing can be:
   # bearing(a,b) or bearing(b,a)
@@ -61,7 +76,7 @@ smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link, pt_index = "n
   gps_bearing <- traj$GPS.Bearing[pt_index]
   candidate_links$direction <- sapply(candidate_links$edge_id, 
                                       function(x) {
-                                        bearing <- bearing(roads@sl@lines[[x]]@Lines[[1]]@coords[1,],
+                                        bearing <- geosphere::bearing(roads@sl@lines[[x]]@Lines[[1]]@coords[1,],
                                                            roads@sl@lines[[x]]@Lines[[1]]@coords[2,])
                                         if (bearing - gps_bearing <= -90) {
                                           bearing <- bearing + 180
@@ -133,15 +148,7 @@ smp2 <- function(traj, roads = "DigitalRoadNetwork", current_link, pt_index = "n
   candidate_links$pred <- predict(fis3, newdata)$predicted.val
   
   # Current link the vehicle is traveling on
-  current_link <- candidate_links[candidate_links$pred ==
-                              max(candidate_links$pred),][,c("V1", "V2", "edge_id", "direction", "NP_x", "NP_y")] 
+  current_link <- candidate_links[which.max(candidate_links$pred),c("V1", "V2", "edge_id", "direction", "NP_x", "NP_y")] 
   
   current_link 
 }
-
-
-
-
-
-
-

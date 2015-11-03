@@ -114,7 +114,9 @@ mm.SpatialPointsDataFrame <- function(traj, plot = FALSE, DRN = NULL, err_region
     # Check the possibility of matching the next point on the current link
     pred_val <- smp1(edit_traj, roads, current_link, j)$predicted.val
     if (pred_val >= 60) {
-      PD <- dist2Line(edit_traj[,c("coords.x1", "coords.x2")][j,], 
+	  if (!requireNamespace("geosphere", quietly = TRUE))
+	  	stop("package geosphere required")
+      PD <- geosphere::dist2Line(edit_traj[,c("coords.x1", "coords.x2")][j,], 
                       roads@sl@lines[[current_link$edge_id]]@Lines[[1]]@coords)
       edit_traj$coords.x1[j] <- PD[2]
       edit_traj$coords.x2[j] <- PD[3]

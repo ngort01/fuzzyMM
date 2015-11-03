@@ -13,19 +13,24 @@ imp <- function (traj, roads = "DigitalRoadNetwork", err_region) {
     current_pt <- cbind(lon, lat)
     rec <- err_region(lon, lat, err_region)
     
+    if (!requireNamespace("rgeos", quietly = TRUE))
+	  stop("package rgeos required")
     # Get edges inside the error region 
-    candidate_links <- data.frame(edge_id = unique(c(which(gIntersects(rec, roads@sl, byid = TRUE)), 
-                                                     which(gContains(rec, roads@sl, byid = TRUE)))))
+    candidate_links <- data.frame(edge_id = unique(c(which(rgeos::gIntersects(rec, roads@sl, byid = TRUE)), 
+                                                     which(rgeos::gContains(rec, roads@sl, byid = TRUE)))))
     
     # Nodes of the candidate links
     candidate_links$V1 <- get.edgelist(roads@g)[candidate_links$edge_id, 1]
     candidate_links$V2 <- get.edgelist(roads@g)[candidate_links$edge_id, 2]
     
     
+	if (!requireNamespace("geosphere", quietly = TRUE))
+		stop("package geosphere required")
     # Calculate the perpendicular distance from the current point to all 
     # segments inside the error region and the closest point on the segments
     PD <- sapply(candidate_links[,c("edge_id")], 
-                 function(x) dist2Line(current_pt, roads@sl@lines[[x]]@Lines[[1]]@coords))
+                 function(x) geosphere::dist2Line(current_pt, 
+				 	roads@sl@lines[[x]]@Lines[[1]]@coords))
     
     # Perpendicular distance
     candidate_links$PD <- PD[1,]
@@ -40,7 +45,7 @@ imp <- function (traj, roads = "DigitalRoadNetwork", err_region) {
     gps_bearing <- traj$GPS.Bearing[i]
     candidate_links$direction <- sapply(candidate_links$edge_id, 
                                   function(x) {
-                                    bearing <- bearing(roads@sl@lines[[x]]@Lines[[1]]@coords[1,],
+                                    bearing <- geosphere::bearing(roads@sl@lines[[x]]@Lines[[1]]@coords[1,],
                                                        roads@sl@lines[[x]]@Lines[[1]]@coords[2,])
                                     if (bearing - gps_bearing <= -90) {
                                       bearing <- bearing + 180
