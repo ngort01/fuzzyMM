@@ -23,5 +23,6 @@
 #' 
 #' @docType package
 #' @name fuzzyMM-package
-#' @import methods igraph frbs osmar sp rgeos rgdal maptools spacetime trajectories
+#' @import methods frbs osmar sp spacetime trajectories
+#' @importFrom igraph as.undirected V "V<-" get.edgelist E shortest.paths
 NULL

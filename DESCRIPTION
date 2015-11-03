@@ -12,11 +12,8 @@ Depends:
     frbs
 Imports:
     methods,
-    igraph,
 	sp,
-    rgeos,
-    rgdal,
-    maptools,
+    igraph,
 	spacetime,
     trajectories
 Suggests:
@@ -24,6 +21,9 @@ Suggests:
     stringr,
 	geosphere,
     RCurl,
+    rgeos,
+    rgdal,
+    maptools,
 	XML
 License: GPL (>= 2)
 URL: http://github.com/ngort01/fuzzyMM

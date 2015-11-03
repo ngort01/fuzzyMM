@@ -13,9 +13,11 @@ imp <- function (traj, roads = "DigitalRoadNetwork", err_region) {
     current_pt <- cbind(lon, lat)
     rec <- err_region(lon, lat, err_region)
     
+    if (!requireNamespace("rgeos", quietly = TRUE))
+	  stop("package rgeos required")
     # Get edges inside the error region 
-    candidate_links <- data.frame(edge_id = unique(c(which(gIntersects(rec, roads@sl, byid = TRUE)), 
-                                                     which(gContains(rec, roads@sl, byid = TRUE)))))
+    candidate_links <- data.frame(edge_id = unique(c(which(rgeos::gIntersects(rec, roads@sl, byid = TRUE)), 
+                                                     which(rgeos::gContains(rec, roads@sl, byid = TRUE)))))
     
     # Nodes of the candidate links
     candidate_links$V1 <- get.edgelist(roads@g)[candidate_links$edge_id, 1]
