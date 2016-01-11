@@ -46,7 +46,8 @@ importEnviroCar = function(file) {
   layer = readOGR(getURL(file,ssl.verifypeer = FALSE), layer = "OGRGeoJSON")
   
   # convert time from text to POSIXct:
-  layer$time = as.POSIXct(layer$time, format="%Y-%m-%dT%H:%M:%SZ")
+  #layer$time = as.POSIXct(layer$time, format="%Y-%m-%dT%H:%M:%SZ")
+  layer$time = as.POSIXct(as.character(layer$time), format="%Y/%m/%d %H:%M:%S", tz="UTC")
   # the third column is JSON, we want it in a table (data.frame) form:
   # 1. form a list of lists
   l1 = lapply(as.character(layer[[3]]), fromJSON)
